@@ -55,7 +55,7 @@ class SqlCompatibleBehavior extends ModelBehavior {
  * @access protected
  */
 	protected $_defaultSettings = array(
-		'convertDates' => false,
+		'convertDates' => true,
 		'operators' => array(
 			'!=' => '$ne',
 			'>' => '$gt',
@@ -94,13 +94,6 @@ class SqlCompatibleBehavior extends ModelBehavior {
 	public function afterFind(&$Model, $results, $primary) {
 		if ($this->settings[$Model->alias]['convertDates']) {
 			$this->convertDates($results);
-		}
-		foreach($results as &$result) {
-			foreach($Model->mongoSchema as $field => $conf) {
-				if(array_key_exists('default', $conf) && !array_key_exists($field, $result[$Model->alias])) {
-					$result[$Model->alias][$field] = $conf['default'];
-				}
-			}
 		}
 		return $results;
 	}

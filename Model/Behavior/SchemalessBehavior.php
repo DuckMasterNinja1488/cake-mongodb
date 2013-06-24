@@ -71,6 +71,27 @@ class SchemalessBehavior extends ModelBehavior {
 	public function setup(&$Model, $config = array()) {
 		//$this->settings[$Model->alias] = array_merge($this->_defaultSettings, $config);
 	}
+	
+/**
+ * If requested, convert dates from MongoDate objects to standard date strings
+ *
+ * @param mixed $Model
+ * @param mixed $results
+ * @param mixed $primary
+ * @return void
+ * @access public
+ */
+	public function afterFind(&$Model, $results, $primary) {
+		foreach($results as &$result) {
+			foreach($Model->_schema as $field => $conf) {
+				$conf += array('default' => null);
+				if(!array_key_exists($field, $result[$Model->alias])) {
+					$result[$Model->alias][$field] = $conf['default'];
+				}
+			}
+		}
+		return $results;
+	}
 
 /**
  * beforeSave method
